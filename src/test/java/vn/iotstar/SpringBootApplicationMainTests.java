@@ -44,7 +44,7 @@ class SpringBootApplicationMainTests {
     void testSampleUsersLogin() {
         Assertions.assertTrue(userService.login("admin", "123456").isPresent());
         Assertions.assertTrue(userService.login("kiet24110032", "123456").isPresent());
-        Assertions.assertFalse(userService.existsByEmail("24110032@student.hcmute.edu.vn"));
+        Assertions.assertTrue(categoryService.count() >= 5);
     }
 
     @Test

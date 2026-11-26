@@ -42,14 +42,15 @@ VALUES
 ('kiet24110032', '$2a$10$VBzDlCJe4EkSPu43pLIXHucASyOzOKTathsMAI46Uyo7FEquGvXIO', 'kiet@iotstar.vn', N'Trương Gia Kiệt', '0987654321', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200', 1, 1, NOW())
 ON DUPLICATE KEY UPDATE password=VALUES(password), status=VALUES(status);
 
-INSERT INTO categories (CategoryId, CategoryName, Images, Status)
+INSERT INTO categories (CategoryName, Images, Status)
 VALUES 
-(1, N'Lập Trình Web Spring Boot', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600', 1),
-(2, N'Công Nghệ Phần Mềm & DevOps', 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600', 1),
-(3, N'Kiến Trúc Microservices', 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600', 1),
-(4, N'Cơ Sở Dữ Liệu & Tối Ưu Hóa', 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600', 1),
-(5, N'Trí Tuệ Nhân Tạo Ứng Dụng', 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600', 1),
-(6, N'Bảo Mật Web & Xác Thực', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600', 1)
-ON DUPLICATE KEY UPDATE CategoryId=CategoryId;
+(N'Lập Trình Web với Java Spring Boot', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600', 1),
+(N'Công Nghệ Phần Mềm & DevOps', 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600', 1),
+(N'Kiến Trúc Microservices & Cloud', 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600', 1),
+(N'Cơ Sở Dữ Liệu & Tối Ưu Hóa SQL', 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600', 1),
+(N'Lập Trình Thiết Bị Di Động Flutter', 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600', 1),
+(N'Trí Tuệ Nhân Tạo & Học Máy (AI/ML)', 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600', 1),
+(N'An Toàn & Bảo Mật Hệ Thống Web', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600', 1),
+(N'Cấu Trúc Dữ Liệu & Giải Thuật', 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;

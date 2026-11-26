@@ -1,6 +1,7 @@
 package vn.iotstar;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -82,14 +83,40 @@ public class SpringBootApplicationMain {
             }
             userRepository.save(student);
 
-            // Seed Categories if empty
-            if (categoryRepository.count() == 0) {
-                categoryRepository.save(new Category(null, "Lập Trình Web Spring Boot", "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600", 1));
-                categoryRepository.save(new Category(null, "Công Nghệ Phần Mềm & DevOps", "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600", 1));
-                categoryRepository.save(new Category(null, "Kiến Trúc Microservices", "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600", 1));
-                categoryRepository.save(new Category(null, "Cơ Sở Dữ Liệu & Tối Ưu Hóa", "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600", 1));
-                categoryRepository.save(new Category(null, "Trí Tuệ Nhân Tạo Ứng Dụng", "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600", 1));
-                categoryRepository.save(new Category(null, "Bảo Mật Web & Xác Thực", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600", 1));
+            // Danh sách các môn học chuẩn ngành Công nghệ Thông tin (HCMUTE)
+            String[][] itCourses = {
+                {"Lập Trình Web với Java Spring Boot", "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600"},
+                {"Công Nghệ Phần Mềm & DevOps", "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600"},
+                {"Kiến Trúc Microservices & Cloud", "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600"},
+                {"Cơ Sở Dữ Liệu & Tối Ưu Hóa SQL", "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600"},
+                {"Lập Trình Thiết Bị Di Động Flutter", "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600"},
+                {"Trí Tuệ Nhân Tạo & Học Máy (AI/ML)", "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600"},
+                {"An Toàn & Bảo Mật Hệ Thống Web", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600"},
+                {"Cấu Trúc Dữ Liệu & Giải Thuật", "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600"}
+            };
+
+            // Cập nhật và chuẩn hóa danh mục môn học (thay thế Iphone/tên rác bằng tên môn học, tránh lỗi FK)
+            List<Category> existing = categoryRepository.findAll();
+            for (int i = 0; i < existing.size(); i++) {
+                Category c = existing.get(i);
+                String oldName = c.getCategoryname();
+                if (oldName == null || oldName.trim().isEmpty() || oldName.toLowerCase().contains("iphone") || oldName.contains("Công Nghệ Lập Trình")) {
+                    int courseIndex = i % itCourses.length;
+                    c.setCategoryname(itCourses[courseIndex][0]);
+                    c.setImages(itCourses[courseIndex][1]);
+                    c.setStatus(1);
+                    categoryRepository.save(c);
+                } else if (c.getImages() == null || !c.getImages().startsWith("http")) {
+                    c.setImages("https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600");
+                    categoryRepository.save(c);
+                }
+            }
+
+            // Bổ sung các môn học còn thiếu nếu chưa có
+            for (String[] course : itCourses) {
+                if (!categoryRepository.existsByCategoryname(course[0])) {
+                    categoryRepository.save(new Category(null, course[0], course[1], 1));
+                }
             }
         };
     }

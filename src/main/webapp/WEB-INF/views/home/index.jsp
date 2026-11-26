@@ -73,11 +73,12 @@
                     <div style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow:hidden; background:var(--surface);">
                         <c:choose>
                             <c:when test="${not empty cat.images}">
-                                <img src="${cat.images}" alt="${cat.categoryname}" style="width:100%; height:130px; object-fit:cover;" />
+                                <img src="${cat.images}" alt="${cat.categoryname}" style="width:100%; height:130px; object-fit:cover;" 
+                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600';" />
                             </c:when>
                             <c:otherwise>
                                 <div style="width:100%; height:130px; background:var(--surface-muted); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:13px;">
-                                    Không có ảnh
+                                    Môn học CNTT
                                 </div>
                             </c:otherwise>
                         </c:choose>

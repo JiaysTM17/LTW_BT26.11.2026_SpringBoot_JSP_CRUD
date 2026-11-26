@@ -78,11 +78,12 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${not empty cate.images}">
-                                                <img src="${cate.images}" alt="${cate.name}" class="table-thumb" />
+                                                <img src="${cate.images}" alt="${cate.name}" class="table-thumb" 
+                                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=100';" />
                                             </c:when>
                                             <c:otherwise>
                                                 <div class="table-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:10px;">
-                                                    Trống
+                                                    Môn học
                                                 </div>
                                             </c:otherwise>
                                         </c:choose>
