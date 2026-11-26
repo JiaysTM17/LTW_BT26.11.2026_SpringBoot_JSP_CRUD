@@ -36,6 +36,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<Category> findByCategorynameContaining(String keyword, Pageable page) {
+        return categoryRepository.findByCategorynameContaining(keyword, page);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Category> findAll(Pageable pageable) {
+        return categoryRepository.findAll(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Category> getActiveCategories() {
         return categoryRepository.findAll();
     }

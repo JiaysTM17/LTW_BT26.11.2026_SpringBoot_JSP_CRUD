@@ -3,6 +3,7 @@ package vn.iotstar.service;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import vn.iotstar.entity.User;
 
@@ -13,6 +14,10 @@ public interface UserService {
     Optional<User> login(String username, String password);
 
     Page<User> getAllUsers(int page, int size, String keyword);
+
+    Page<User> findByUsernameContaining(String keyword, Pageable page);
+
+    Page<User> findAll(Pageable pageable);
 
     Optional<User> getUserById(Integer id);
 

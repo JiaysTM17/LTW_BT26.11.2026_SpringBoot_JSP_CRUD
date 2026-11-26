@@ -37,7 +37,7 @@ public class AuthController {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser != null) {
             if (currentUser.isAdmin()) {
-                return "redirect:/admin/categories";
+                return "redirect:/admin/categories/searchpaginated";
             }
             return "redirect:/home";
         }
@@ -88,7 +88,7 @@ public class AuthController {
         session.setAttribute("isAdmin", user.isAdmin());
 
         if (user.isAdmin()) {
-            return "redirect:/admin/categories";
+            return "redirect:/admin/categories/searchpaginated";
         }
         return "redirect:/home";
     }

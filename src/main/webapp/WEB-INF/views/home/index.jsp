@@ -4,14 +4,10 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang chủ &bull; Cổng thông tin người dùng</title>
-    <link rel="stylesheet" href="<c:url value='/static/css/style.css'/>" />
 </head>
 <body>
-    <jsp:include page="../common/header.jsp" />
-
-    <main class="app-content" style="max-width: 1040px; margin: 0 auto; padding-top: 36px;">
+    <div style="max-width: 1040px; margin: 0 auto; padding-top: 24px;">
         <c:if test="${not empty errorMessage}">
             <div class="alert alert-error">${errorMessage}</div>
         </c:if>
@@ -19,10 +15,10 @@
         <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <h1 style="font-size:22px; margin-bottom:4px;">Cổng thông tin môn học Lập trình Web</h1>
-                <p>Khoa Công nghệ Thông tin &bull; Trường Đại học Sư phạm Kỹ thuật TP.HCM</p>
+                <p>Khoa Công nghệ Thông tin &bull; Trường Đại học Sư phạm Kỹ thuật TP.HCM (HCMUTE)</p>
             </div>
             <c:if test="${not empty currentUser and currentUser.roleid == 2}">
-                <a href="<c:url value='/admin/categories'/>" class="btn btn-primary">
+                <a href="<c:url value='/admin/categories/searchpaginated'/>" class="btn btn-primary">
                     Truy cập Trang Quản trị (Admin)
                 </a>
             </c:if>
@@ -96,8 +92,6 @@
                 </c:forEach>
             </div>
         </div>
-    </main>
-
-    <jsp:include page="../common/footer.jsp" />
+    </div>
 </body>
 </html>

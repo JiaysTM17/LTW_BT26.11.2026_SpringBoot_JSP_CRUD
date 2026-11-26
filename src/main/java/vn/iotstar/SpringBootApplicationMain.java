@@ -5,8 +5,13 @@ import java.util.Date;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
+import vn.iotstar.config.CustomSiteMeshFilter;
 import vn.iotstar.entity.Category;
 import vn.iotstar.entity.User;
 import vn.iotstar.repository.CategoryRepository;
@@ -21,6 +26,23 @@ public class SpringBootApplicationMain {
     }
 
     @Bean
+    public FilterRegistrationBean<CustomSiteMeshFilter> siteMeshFilter() {
+        FilterRegistrationBean<CustomSiteMeshFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(new CustomSiteMeshFilter());
+        filterRegistrationBean.addUrlPatterns("/*");
+        return filterRegistrationBean;
+    }
+
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public CharacterEncodingFilter characterEncodingFilter() {
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceEncoding(true);
+        return filter;
+    }
+
+    @Bean
     public CommandLineRunner initDatabase(UserRepository userRepository, CategoryRepository categoryRepository) {
         return args -> {
             // Seed Admin User
@@ -32,8 +54,8 @@ public class SpringBootApplicationMain {
                 admin.setFullname("Quản Trị Viên");
                 admin.setPhone("0909123456");
                 admin.setAvatar("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200");
-                admin.setRoleid(2); // Admin role
-                admin.setStatus(1); // Active
+                admin.setRoleid(2);
+                admin.setStatus(1);
                 admin.setCreateddate(new Date());
                 userRepository.save(admin);
             }
@@ -47,7 +69,7 @@ public class SpringBootApplicationMain {
                 student.setFullname("Trương Gia Kiệt");
                 student.setPhone("0987654321");
                 student.setAvatar("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200");
-                student.setRoleid(1); // User role
+                student.setRoleid(1);
                 student.setStatus(1);
                 student.setCreateddate(new Date());
                 userRepository.save(student);

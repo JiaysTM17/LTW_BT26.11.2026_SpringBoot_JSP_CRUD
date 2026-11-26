@@ -52,12 +52,28 @@ public class Category implements Serializable {
         this.categoryid = categoryid;
     }
 
+    public Integer getId() {
+        return categoryid;
+    }
+
+    public void setId(Integer id) {
+        this.categoryid = id;
+    }
+
     public String getCategoryname() {
         return categoryname;
     }
 
     public void setCategoryname(String categoryname) {
         this.categoryname = categoryname;
+    }
+
+    public String getName() {
+        return categoryname;
+    }
+
+    public void setName(String name) {
+        this.categoryname = name;
     }
 
     public String getImages() {

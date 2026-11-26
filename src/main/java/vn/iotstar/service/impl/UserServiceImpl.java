@@ -29,10 +29,10 @@ public class UserServiceImpl implements UserService {
     public User register(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         if (user.getRoleid() == null) {
-            user.setRoleid(1); // Standard User
+            user.setRoleid(1);
         }
         if (user.getStatus() == null) {
-            user.setStatus(1); // Active
+            user.setStatus(1);
         }
         if (user.getCreateddate() == null) {
             user.setCreateddate(new Date());
@@ -62,6 +62,18 @@ public class UserServiceImpl implements UserService {
             return userRepository.findByUsernameContainingIgnoreCaseOrFullnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
                     kw, kw, kw, pageable);
         }
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<User> findByUsernameContaining(String keyword, Pageable page) {
+        return userRepository.findByUsernameContaining(keyword, page);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
@@ -105,7 +117,6 @@ public class UserServiceImpl implements UserService {
             user.setStatus(userDetails.getStatus());
         }
 
-        // Only update password if a new one is provided
         if (userDetails.getPassword() != null && !userDetails.getPassword().trim().isEmpty()) {
             user.setPassword(PasswordUtil.hashPassword(userDetails.getPassword().trim()));
         }

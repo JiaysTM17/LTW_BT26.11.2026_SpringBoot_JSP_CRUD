@@ -58,29 +58,33 @@ Dự án được triển khai nhằm đáp ứng đầy đủ các yêu cầu t
 
 ```text
 Source/
-├── pom.xml                                 # Cấu hình Maven dependencies & plugins
+├── pom.xml                                 # Cấu hình Maven dependencies & plugins (Tomcat Jasper, SiteMesh 3.2.2)
 ├── database.sql                            # Kịch bản DDL tạo bảng và dữ liệu mẫu
 ├── README.md                               # Tài liệu hướng dẫn và báo cáo kỹ thuật
+├── CHAY_UNG_DUNG.bat                       # Script khởi chạy ứng dụng nhanh cho Windows
 ├── src/
 │   ├── main/
 │   │   ├── java/vn/iotstar/
-│   │   │   ├── SpringBootApplicationMain.java   # Lớp khởi chạy ứng dụng & seed dữ liệu
+│   │   │   ├── SpringBootApplicationMain.java   # Khởi chạy ứng dụng, SiteMesh Filter bean, Seed data
 │   │   │   ├── config/
-│   │   │   │   └── WebMvcConfig.java            # Cấu hình Interceptor & Static Resources
+│   │   │   │   ├── CustomSiteMeshFilter.java    # Bộ lọc Sitemesh 3 điều hướng decorator
+│   │   │   │   ├── JSPStaticResourceConfigurer.java # Cấu hình nạp tài nguyên tĩnh JSP với Tomcat
+│   │   │   │   ├── TomcatJSPConfiguration.java  # Tích hợp Tomcat Context Customizer cho JSP
+│   │   │   │   └── WebMvcConfig.java            # Đăng ký Interceptor bảo mật & Resource Handlers
 │   │   │   ├── controller/
 │   │   │   │   ├── AuthController.java          # Xử lý Login, Register, Logout
 │   │   │   │   ├── HomeController.java          # Trang chủ người dùng Portal
 │   │   │   │   └── admin/
-│   │   │   │       ├── AdminCategoryController.java # CRUD Category (Tìm kiếm, Phân trang)
-│   │   │   │       └── AdminUserController.java     # CRUD User (Tìm kiếm, Phân trang)
+│   │   │   │       ├── AdminCategoryController.java # CRUD Category (/searchpaginated, /addOrEdit, /save, /delete)
+│   │   │   │       └── AdminUserController.java     # CRUD User (/searchpaginated, /addOrEdit, /save, /delete)
 │   │   │   ├── entity/
-│   │   │   │   ├── Category.java                # Entity ánh xạ bảng categories
-│   │   │   │   └── User.java                    # Entity ánh xạ bảng users
+│   │   │   │   ├── Category.java                # Entity ánh xạ bảng categories (CategoryId, CategoryName)
+│   │   │   │   └── User.java                    # Entity ánh xạ bảng users (id, username, password, roleid,...)
 │   │   │   ├── interceptor/
 │   │   │   │   └── AdminSecurityInterceptor.java# Kiểm tra phiên đăng nhập và quyền Admin
 │   │   │   ├── repository/
-│   │   │   │   ├── CategoryRepository.java      # JpaRepository cho Category
-│   │   │   │   └── UserRepository.java          # JpaRepository cho User
+│   │   │   │   ├── CategoryRepository.java      # JpaRepository (findByCategorynameContaining)
+│   │   │   │   └── UserRepository.java          # JpaRepository (findByUsernameContaining Or Fullname Or Email)
 │   │   │   ├── service/
 │   │   │   │   ├── CategoryService.java
 │   │   │   │   ├── UserService.java
@@ -90,10 +94,13 @@ Source/
 │   │   │   └── util/
 │   │   │       └── PasswordUtil.java            # Tiện ích hash & verify mật khẩu BCrypt
 │   │   ├── resources/
-│   │   │   └── application.properties           # Cấu hình DataSource, JPA, Port, JSP
+│   │   │   └── application.properties           # Cấu hình DataSource, JPA, Port 8090, JSP prefix/suffix
 │   │   └── webapp/
 │   │       ├── static/css/
 │   │       │   └── style.css                    # CSS hệ thống thiết kế Clean Slate
+│   │       ├── decorators/
+│   │       │   ├── web.jsp                      # Layout Sitemesh cho phía Web Portal / Auth
+│   │       │   └── admin.jsp                    # Layout Sitemesh cho trang Quản trị Admin
 │   │       └── WEB-INF/views/
 │   │           ├── common/
 │   │           │   ├── header.jsp
@@ -106,33 +113,33 @@ Source/
 │   │           │   └── index.jsp
 │   │           └── admin/
 │   │               ├── category/
-│   │               │   ├── list.jsp
-│   │               │   └── form.jsp
+│   │               │   ├── list.jsp                 # Bảng danh mục có phân trang & chọn size (3, 5, 10, 15, 20)
+│   │               │   └── form.jsp                 # Form thêm / chỉnh sửa danh mục
 │   │               └── user/
-│   │                   ├── list.jsp
-│   │                   └── form.jsp
+│   │                   ├── list.jsp                 # Bảng người dùng có phân trang & chọn size
+│   │                   └── form.jsp                 # Form thêm / chỉnh sửa người dùng
 ```
 
 ---
 
 ## 4. Hướng dẫn Khởi chạy Ứng dụng
 
-### Bước 1: Khởi tạo Cơ sở dữ liệu MySQL
-1. Khởi động dịch vụ MySQL Server (cổng 3306).
-2. Chạy nội dung trong file `database.sql` trên công cụ quản trị (MySQL Workbench / phpMyAdmin / DBeaver) hoặc để Hibernate tự động sinh cấu trúc bảng theo thuộc tính `spring.jpa.hibernate.ddl-auto=update`.
+### Cách 1: Khởi chạy nhanh bằng File Script (Khuyên dùng)
+Nhấp đúp chuột vào file **`CHAY_UNG_DUNG.bat`** tại thư mục gốc hoặc thư mục `Source`. Hệ thống sẽ tự động khởi động ứng dụng với JDK 21 và chạy file JAR đã đóng gói sẵn.
 
-### Bước 2: Build & Chạy Spring Boot
+### Cách 2: Khởi chạy qua dòng lệnh Maven
 Mở terminal tại thư mục `Source` và thực thi:
 ```bash
-mvn clean compile
-mvn spring-boot:run
+mvn clean package -DskipTests
+java -jar target/24110032_TruongGiaKiet_BT26.11.2026-1.0.0.jar
 ```
 
-Ứng dụng sẽ khởi chạy tại cổng **8088**:
-* **URL Đăng nhập:** `http://localhost:8088/login`
-* **URL Trang chủ:** `http://localhost:8088/home`
-* **URL Quản trị Danh mục:** `http://localhost:8088/admin/categories`
-* **URL Quản trị Người dùng:** `http://localhost:8088/admin/users`
+Ứng dụng khởi chạy tại cổng **8090** (theo tài liệu cấu hình của giảng viên):
+* **URL Đăng nhập:** `http://localhost:8090/login`
+* **URL Đăng ký:** `http://localhost:8090/register`
+* **URL Trang chủ:** `http://localhost:8090/home`
+* **URL Phân trang & Tìm kiếm Danh mục:** `http://localhost:8090/admin/categories/searchpaginated`
+* **URL Phân trang & Tìm kiếm Người dùng:** `http://localhost:8090/admin/users/searchpaginated`
 
 ### Bước 3: Tài khoản thử nghiệm
 Hệ thống tích hợp sẵn bộ nạp dữ liệu tự động (`CommandLineRunner`) với 2 tài khoản mẫu:

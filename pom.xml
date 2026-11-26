@@ -9,14 +9,14 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <groupId>vn.iotstar</groupId>
     <artifactId>24110032_TruongGiaKiet_BT26.11.2026</artifactId>
     <version>1.0.0</version>
     <name>24110032_TruongGiaKiet_BT26.11.2026</name>
-    <description>Bài tập thực hành Lập trình Web - Spring Boot 3 &amp; JSP/JSTL CRUD Category, User, Auth</description>
+    <description>Bài tập thực hành Lập trình Web - Spring Boot 3 &amp; JSP/JSTL, Sitemesh 3, CRUD Category, User, Auth</description>
 
     <properties>
         <java.version>21</java.version>
@@ -31,6 +31,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Starter Tomcat -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
         </dependency>
 
         <!-- Spring Boot Starter Data JPA -->
@@ -51,6 +57,14 @@
             <artifactId>tomcat-embed-jasper</artifactId>
         </dependency>
 
+        <!-- Jakarta Servlet JSP API -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Jakarta Servlet JSP JSTL API -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
@@ -61,6 +75,13 @@
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+        </dependency>
+
+        <!-- Sitemesh 3 for Web Decoration -->
+        <dependency>
+            <groupId>org.sitemesh</groupId>
+            <artifactId>sitemesh</artifactId>
+            <version>3.2.2</version>
         </dependency>
 
         <!-- MySQL Connector -->

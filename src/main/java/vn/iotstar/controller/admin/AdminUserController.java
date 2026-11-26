@@ -1,10 +1,17 @@
 package vn.iotstar.controller.admin;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,37 +36,64 @@ public class AdminUserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public String listUsers(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "5") int size,
-            @RequestParam(name = "keyword", required = false) String keyword,
-            Model model) {
+    @GetMapping({"", "/", "/list"})
+    public String index(ModelMap model,
+                        @RequestParam(name = "name", required = false) String name,
+                        @RequestParam("page") Optional<Integer> page,
+                        @RequestParam("size") Optional<Integer> size) {
+        return search(model, name, page, size);
+    }
 
-        Page<User> userPage = userService.getAllUsers(page, size, keyword);
+    @RequestMapping("/searchpaginated")
+    public String search(ModelMap model,
+                         @RequestParam(name = "name", required = false) String name,
+                         @RequestParam("page") Optional<Integer> page,
+                         @RequestParam("size") Optional<Integer> size) {
 
-        model.addAttribute("userPage", userPage);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("pageSize", size);
-        model.addAttribute("keyword", keyword != null ? keyword : "");
-        model.addAttribute("totalPages", userPage.getTotalPages());
-        model.addAttribute("totalElements", userPage.getTotalElements());
+        int count = (int) userService.count();
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(5);
 
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<User> resultPage = null;
+
+        if (StringUtils.hasText(name)) {
+            resultPage = userService.getAllUsers(currentPage - 1, pageSize, name);
+            model.addAttribute("name", name);
+        } else {
+            resultPage = userService.findAll(pageable);
+        }
+
+        int totalPages = resultPage.getTotalPages();
+        if (totalPages > 0) {
+            int start = Math.max(1, currentPage - 2);
+            int end = Math.min(currentPage + 2, totalPages);
+            if (totalPages > count) {
+                if (end == totalPages) start = end - count;
+                else if (start == 1) end = start + count;
+            }
+            List<Integer> pageNumbers = IntStream.rangeClosed(start, end)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        model.addAttribute("userPage", resultPage);
         return "admin/user/list";
     }
 
-    @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    @GetMapping({"/add", "/create"})
+    public String showCreateForm(ModelMap model) {
         model.addAttribute("user", new User());
         model.addAttribute("isEdit", false);
         return "admin/user/form";
     }
 
-    @PostMapping("/save")
+    @PostMapping({"/save", "/saveOrUpdate"})
     public String saveUser(
             @Valid @ModelAttribute("user") User user,
             BindingResult bindingResult,
-            Model model,
+            ModelMap model,
             RedirectAttributes redirectAttributes) {
 
         if (userService.existsByUsername(user.getUsername())) {
@@ -75,20 +109,20 @@ public class AdminUserController {
         }
 
         userService.createUser(user);
-        redirectAttributes.addFlashAttribute("successMessage", "Thêm người dùng mới thành công.");
-        return "redirect:/admin/users";
+        redirectAttributes.addFlashAttribute("message", "Thêm người dùng mới thành công.");
+        return "redirect:/admin/users/searchpaginated";
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditForm(@PathVariable("id") Integer id, ModelMap model, RedirectAttributes redirectAttributes) {
         Optional<User> optUser = userService.getUserById(id);
         if (optUser.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy người dùng.");
-            return "redirect:/admin/users";
+            redirectAttributes.addFlashAttribute("message", "Không tìm thấy người dùng.");
+            return "redirect:/admin/users/searchpaginated";
         }
 
         User user = optUser.get();
-        user.setPassword(""); // Do not expose hashed password in form
+        user.setPassword("");
         model.addAttribute("user", user);
         model.addAttribute("isEdit", true);
         return "admin/user/form";
@@ -102,12 +136,12 @@ public class AdminUserController {
 
         try {
             userService.updateUser(id, user);
-            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thông tin người dùng thành công.");
+            redirectAttributes.addFlashAttribute("message", "Cập nhật thông tin người dùng thành công.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi cập nhật: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Lỗi cập nhật: " + e.getMessage());
         }
 
-        return "redirect:/admin/users";
+        return "redirect:/admin/users/searchpaginated";
     }
 
     @GetMapping("/delete/{id}")
@@ -118,16 +152,16 @@ public class AdminUserController {
 
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser != null && currentUser.getId().equals(id)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không thể tự xóa tài khoản đang đăng nhập.");
-            return "redirect:/admin/users";
+            redirectAttributes.addFlashAttribute("message", "Bạn không thể tự xóa tài khoản đang đăng nhập.");
+            return "redirect:/admin/users/searchpaginated";
         }
 
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
-            redirectAttributes.addFlashAttribute("successMessage", "Xóa người dùng thành công.");
+            redirectAttributes.addFlashAttribute("message", "Xóa người dùng thành công.");
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy người dùng để xóa.");
+            redirectAttributes.addFlashAttribute("message", "Không tìm thấy người dùng để xóa.");
         }
-        return "redirect:/admin/users";
+        return "redirect:/admin/users/searchpaginated";
     }
 }

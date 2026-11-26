@@ -4,23 +4,23 @@
 <aside class="app-sidebar">
     <div>
         <div class="nav-group-title">Quản trị hệ thống</div>
-        <a href="<c:url value='/admin/categories'/>" class="nav-link ${activeMenu == 'category' ? 'active' : ''}">
+        <a href="<c:url value='/admin/categories/searchpaginated'/>" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <rect x="3" y="3" width="7" height="7" rx="1"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="1"></rect>
                 <rect x="14" y="14" width="7" height="7" rx="1"></rect>
                 <rect x="3" y="14" width="7" height="7" rx="1"></rect>
             </svg>
-            Quản lý Danh mục
+            Quản lý Danh mục (Category)
         </a>
-        <a href="<c:url value='/admin/users'/>" class="nav-link ${activeMenu == 'user' ? 'active' : ''}">
+        <a href="<c:url value='/admin/users/searchpaginated'/>" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
-            Quản lý Người dùng
+            Quản lý Người dùng (User)
         </a>
 
         <div class="nav-group-title" style="margin-top: 24px;">Điều hướng</div>
