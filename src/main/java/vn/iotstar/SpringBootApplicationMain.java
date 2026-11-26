@@ -45,35 +45,42 @@ public class SpringBootApplicationMain {
     @Bean
     public CommandLineRunner initDatabase(UserRepository userRepository, CategoryRepository categoryRepository) {
         return args -> {
-            // Seed Admin User
-            if (!userRepository.existsByUsername("admin")) {
-                User admin = new User();
-                admin.setUsername("admin");
-                admin.setPassword(PasswordUtil.hashPassword("123456"));
-                admin.setEmail("admin@iotstar.vn");
-                admin.setFullname("Quản Trị Viên");
-                admin.setPhone("0909123456");
-                admin.setAvatar("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200");
-                admin.setRoleid(2);
-                admin.setStatus(1);
-                admin.setCreateddate(new Date());
-                userRepository.save(admin);
-            }
+            // Giải phóng email sinh viên nếu đang bị tài khoản test cũ chiếm giữ
+            userRepository.findByEmail("24110032@student.hcmute.edu.vn").ifPresent(oldUser -> {
+                if ("kiettg".equals(oldUser.getUsername())) {
+                    userRepository.delete(oldUser);
+                }
+            });
 
-            // Seed Student User
-            if (!userRepository.existsByUsername("kiet24110032")) {
-                User student = new User();
-                student.setUsername("kiet24110032");
-                student.setPassword(PasswordUtil.hashPassword("123456"));
-                student.setEmail("kiet24110032@student.hcmute.edu.vn");
-                student.setFullname("Trương Gia Kiệt");
-                student.setPhone("0987654321");
-                student.setAvatar("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200");
-                student.setRoleid(1);
-                student.setStatus(1);
-                student.setCreateddate(new Date());
-                userRepository.save(student);
+            // Seed / Cập nhật tài khoản Admin với mật khẩu BCrypt chuẩn '123456'
+            User admin = userRepository.findByUsername("admin").orElse(new User());
+            admin.setUsername("admin");
+            admin.setPassword(PasswordUtil.hashPassword("123456"));
+            admin.setEmail("admin@iotstar.vn");
+            admin.setFullname("Quản Trị Viên");
+            admin.setPhone("0909123456");
+            admin.setAvatar("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200");
+            admin.setRoleid(2);
+            admin.setStatus(1);
+            if (admin.getCreateddate() == null) {
+                admin.setCreateddate(new Date());
             }
+            userRepository.save(admin);
+
+            // Seed / Cập nhật tài khoản Sinh viên với mật khẩu BCrypt chuẩn '123456'
+            User student = userRepository.findByUsername("kiet24110032").orElse(new User());
+            student.setUsername("kiet24110032");
+            student.setPassword(PasswordUtil.hashPassword("123456"));
+            student.setEmail("kiet@iotstar.vn");
+            student.setFullname("Trương Gia Kiệt");
+            student.setPhone("0987654321");
+            student.setAvatar("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200");
+            student.setRoleid(1);
+            student.setStatus(1);
+            if (student.getCreateddate() == null) {
+                student.setCreateddate(new Date());
+            }
+            userRepository.save(student);
 
             // Seed Categories if empty
             if (categoryRepository.count() == 0) {

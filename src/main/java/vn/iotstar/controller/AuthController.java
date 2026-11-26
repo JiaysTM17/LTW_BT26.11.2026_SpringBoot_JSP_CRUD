@@ -116,7 +116,12 @@ public class AuthController {
             return "auth/register";
         }
 
-        if (!user.getPassword().equals(confirmPassword)) {
+        user.setUsername(user.getUsername() != null ? user.getUsername().trim() : "");
+        user.setEmail(user.getEmail() != null ? user.getEmail().trim().toLowerCase() : "");
+        if (user.getFullname() != null) user.setFullname(user.getFullname().trim());
+        if (user.getPhone() != null) user.setPhone(user.getPhone().trim());
+
+        if (user.getPassword() == null || !user.getPassword().equals(confirmPassword)) {
             model.addAttribute("errorMessage", "Mật khẩu xác nhận không khớp.");
             return "auth/register";
         }

@@ -35,12 +35,12 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 -- 3. SEED DỮ LIỆU MẪU
--- Mật khẩu mặc định: '123456' được mã hóa bằng BCrypt: $2a$10$EIXzaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW
+-- Mật khẩu mặc định: '123456' được mã hóa bằng BCrypt
 INSERT INTO users (username, password, email, fullname, phone, avatar, roleid, status, createddate)
 VALUES 
-('admin', '$2a$10$EIXzaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 'admin@iotstar.vn', N'Quản Trị Viên', '0909123456', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200', 2, 1, NOW()),
-('kiet24110032', '$2a$10$EIXzaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 'kiet24110032@student.hcmute.edu.vn', N'Trương Gia Kiệt', '0987654321', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200', 1, 1, NOW())
-ON DUPLICATE KEY UPDATE id=id;
+('admin', '$2a$10$VBzDlCJe4EkSPu43pLIXHucASyOzOKTathsMAI46Uyo7FEquGvXIO', 'admin@iotstar.vn', N'Quản Trị Viên', '0909123456', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200', 2, 1, NOW()),
+('kiet24110032', '$2a$10$VBzDlCJe4EkSPu43pLIXHucASyOzOKTathsMAI46Uyo7FEquGvXIO', 'kiet@iotstar.vn', N'Trương Gia Kiệt', '0987654321', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200', 1, 1, NOW())
+ON DUPLICATE KEY UPDATE password=VALUES(password), status=VALUES(status);
 
 INSERT INTO categories (CategoryId, CategoryName, Images, Status)
 VALUES 

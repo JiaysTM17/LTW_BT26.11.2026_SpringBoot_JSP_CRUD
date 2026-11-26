@@ -16,9 +16,11 @@ public class PasswordUtil {
             return false;
         }
         try {
-            return BCrypt.checkpw(plainPassword, hashedPassword);
-        } catch (Exception e) {
-            return plainPassword.equals(hashedPassword);
+            if (BCrypt.checkpw(plainPassword.trim(), hashedPassword.trim())) {
+                return true;
+            }
+        } catch (Exception ignored) {
         }
+        return plainPassword.trim().equals(hashedPassword.trim());
     }
 }

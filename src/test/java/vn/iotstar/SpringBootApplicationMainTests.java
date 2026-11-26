@@ -41,6 +41,13 @@ class SpringBootApplicationMainTests {
     }
 
     @Test
+    void testSampleUsersLogin() {
+        Assertions.assertTrue(userService.login("admin", "123456").isPresent());
+        Assertions.assertTrue(userService.login("kiet24110032", "123456").isPresent());
+        Assertions.assertFalse(userService.existsByEmail("24110032@student.hcmute.edu.vn"));
+    }
+
+    @Test
     void testPasswordUtil() {
         String raw = "secretPassword123";
         String hashed = PasswordUtil.hashPassword(raw);
