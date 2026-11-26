@@ -23,8 +23,8 @@ public class Category implements Serializable {
     private Integer categoryid;
 
     @NotBlank(message = "Tên danh mục không được để trống")
-    @Size(min = 2, max = 100, message = "Tên danh mục phải từ 2 đến 100 ký tự")
-    @Column(name = "CategoryName", columnDefinition = "nvarchar(100) not null")
+    @Size(min = 2, max = 255, message = "Tên danh mục phải từ 2 đến 255 ký tự")
+    @Column(name = "CategoryName", columnDefinition = "nvarchar(255) not null")
     private String categoryname;
 
     @Column(name = "Images", columnDefinition = "nvarchar(500) null")
